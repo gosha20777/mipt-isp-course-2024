@@ -8,9 +8,10 @@ import numpy as np
 
 
 class Image2ImageDataset(Dataset):
-    def __init__(self, x_img: np.ndarray, y_img: np.ndarray, transform: Compose, p_transform: PairTransform = None) -> None:
+    def __init__(self, x_img: np.ndarray, y_img: np.ndarray, transform: Compose, p_transform: PairTransform = None, lengh = 100) -> None:
         self.x_img = x_img
         self.y_img = y_img
+        self.lengh = lengh
         self.transform = transform
         self.p_transform = p_transform
 
@@ -27,4 +28,4 @@ class Image2ImageDataset(Dataset):
         return x, y
 
     def __len__(self) -> int:
-        return 100
+        return self.lengh

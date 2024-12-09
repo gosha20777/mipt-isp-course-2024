@@ -20,6 +20,7 @@ class DefaultPipeline(L.LightningModule):
         optimiser: str = 'adam',
         lr: float = 1e-3,
         weight_decay: float = 0,
+        img2feat: bool = True,
     ) -> None:
         super(DefaultPipeline, self).__init__()
 
@@ -31,6 +32,7 @@ class DefaultPipeline(L.LightningModule):
         self.de_metric = DeltaE()
         self.ssim_metric = SSIM(data_range=(0, 1))
         self.psnr_metric = PSNR(data_range=(0, 1))
+        self.img2feat = img2feat
         
         self.save_hyperparameters(ignore=['model'])
     
@@ -68,9 +70,12 @@ class DefaultPipeline(L.LightningModule):
         return {"optimizer": optimizer, "lr_scheduler": scheduler, "monitor": "val_loss"}
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        x, shape = feature_to_colors(x)
-        pred = self.model(x)
-        pred = colors_to_feature(pred, shape)
+        if self.img2feat:
+            x, shape = feature_to_colors(x)
+            pred = self.model(x)
+            pred = colors_to_feature(pred, shape)
+        else:
+            pred = self.model(x)
         return pred
 
     def training_step(self, batch, batch_idx):
