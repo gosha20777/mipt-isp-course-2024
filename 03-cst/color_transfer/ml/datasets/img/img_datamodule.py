@@ -6,7 +6,6 @@ from torchvision.transforms.v2 import (
     Compose,
     ToImage,
     ToDtype,
-    CenterCrop,
 )
 from torch.utils.data import DataLoader
 from typing import Tuple
@@ -37,17 +36,14 @@ class ImgDataModule(L.LightningDataModule):
         self.batch_size = batch_size
         self.val_batch_size = val_batch_size
         self.test_batch_size = test_batch_size
-        self.image_p_transform = PairTransform(
-            crop_size=128, p=0.5, seed=seed
-        )
-        self.val_image_p_transform = PairTransform(
-            crop_size=128, p=0.0, seed=seed
-        )
 
         self.image_train_transform = Compose([
             ToImage(),
             ToDtype(dtype=torch.float32, scale=True),
         ])
+        self.train_p_transform = PairTransform(
+            128,
+        )
         self.image_val_transform = Compose([
             ToImage(),
             ToDtype(dtype=torch.float32, scale=True),
@@ -61,14 +57,16 @@ class ImgDataModule(L.LightningDataModule):
     def setup(self, stage: str) -> None:
         if stage == 'fit' or stage is None:
             self.train_dataset = Image2ImageDataset(
-                self.x_img, self.y_img, self.image_train_transform, self.image_p_transform,
+                self.x_img, self.y_img, self.image_train_transform, self.train_p_transform
             )
             self.val_dataset = Image2ImageDataset(
-                self.x_img, self.y_img, self.image_val_transform, self.val_image_p_transform,
+                self.x_img, self.y_img, self.image_val_transform,
+                lengh=1
             )
         if stage == 'test' or stage is None:
             self.test_dataset = Image2ImageDataset(
                 self.x_img, self.y_img, self.image_test_transform,
+                lengh=1
             )
 
     def train_dataloader(self) -> DataLoader:

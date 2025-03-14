@@ -23,7 +23,7 @@ class XYZ_TO_SRGB:
         """
         img: float32 image [0, 1]
         """
-        if img.dtype != np.float32:
+        if img.dtype != np.float32 and img.dtype != np.float64:
             warnings.warn("ffs, use float32 not %s" % img.dtype)
         if img.min() < 0 or img.max() > 1:
             warnings.warn(
