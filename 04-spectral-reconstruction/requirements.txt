@@ -1,0 +1,13 @@
+h5py
+ipykernel
+colour-science
+matplotlib
+numpy
+fastapi
+uvicorn
+torch
+einops
+torchvision
+torchmetrics
+tqdm
+scikit-learn
